@@ -56,13 +56,15 @@ public class SetCardGame {
     Game game = new Game();
     Deck deck = new Deck();
     
-    //Set up the game
+    //Set up a random game
     if(random){
       game.deal(12, deck);
     }else{
+      //Set up a game
       System.out.println("Please enter the cards to play with separated by / (e.g 1ore/2dgs/3spf):");
       String[] strArray = input.nextLine().split("/");
 
+      // Add each of the given cards to the game
       for(String c : strArray){
         if(Card.isCard(c)){
           game.deal(Card.decodeCard(c), deck);
@@ -74,12 +76,15 @@ public class SetCardGame {
     //Play the game
     while(!completed){
       String userInput = input.nextLine().toLowerCase();
+      // Exit the game
       if(userInput.equals("exit")) 
         completed=true;
+      // Output a hint (valid set) or submit a set(not from the user)
       else if(userInput.contains("hint") || userInput.equals("submit"))
         if(game.hasSets()) 
           if(userInput.contains("hint")){
             int i;
+            // Determine which hint, or if it does not matter give the first one
             try{
               i = Integer.parseInt(userInput.replaceAll("^.*hint\\D*", "").replaceAll("\\D.*$", ""))-1;
             }catch(Exception e){
@@ -87,16 +92,20 @@ public class SetCardGame {
             }
             System.out.println(game.getValidSet(i));
           }
+          // Submit the first valid set found
           else {
             game.submitSet(0);
             game.deal(3, deck);
           }
         else System.out.println("No sets on the table! Type deal to get more cards");
+      // Deal more cards
       else if(userInput.equals("deal")) 
         game.deal(3, deck);
+      // Output the number of sets on the table
       else if(userInput.toLowerCase().matches(".*how[ ]*many.*(sets?)?.*\\??")){
         System.out.println(game.getSetCount());
       }
+      // Submit a set given by the user
       else if(Game.isSet(userInput)){
         if(game.submitSet(userInput)){
           System.out.println("Set submitted correctly.\n");
@@ -105,8 +114,8 @@ public class SetCardGame {
         else
           System.out.println("The set is not valid");
       }
+      // Add a card from the deck
       else if(userInput.contains("add") && !random){
-        //Add a card from the deck
             try{
               String s = userInput.replaceAll("^.*add\\D*", "").replaceAll("\\D.*$", "");
               game.addCard(s, deck);
